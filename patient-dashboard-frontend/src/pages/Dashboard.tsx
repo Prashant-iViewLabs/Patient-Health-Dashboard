@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
 
     const handlePriorSubmissionform: (formSubmittedStatus: boolean) => void = (formSubmittedStatus) => {
         if (formSubmittedStatus) {
-            setOpen(true)
+            setOpen(false)
             toast.success('Authorization request submitted successfully!');
         } else {
             setOpen(false)

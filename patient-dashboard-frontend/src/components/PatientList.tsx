@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Patient } from '../types';
+import { toast } from 'react-toastify';
 
 interface PatientListProps {
     onSelectPatient: (patient: Patient) => void;
@@ -57,12 +58,13 @@ const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => {
             config
         )
             .then(response => {
-                console.log("Patient List", response.data);
                 setTotalPages(response.data.metadata.totalPages)
                 const formattedPatients: Patient[] = formatPatient(response.data.patients)
                 setPatients(formattedPatients)
             })
-            .catch(error => console.error('Error fetching patients:', error));
+            .catch(() => {
+                toast.error("Error fetching data")
+            });
     }, [currentPage]);
 
     const filterPatients = useCallback(async (searchedTerm: string) => {

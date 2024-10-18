@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+
 const Signup: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
+    const [disableBtn, setDisableBtn] = useState<boolean>(false)
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setDisableBtn(prevState => !prevState)
         try {
             const response = await axios.post(`${import.meta.env.VITE_APP_API_URL}/api/auth/register`, { username, password });
             // Assuming the response contains a token or user data
-            if (response.data.token) {
-                // if (username === "Prashant" && password === "123456789") {
-                // Store the token (you might want to use localStorage or context for better state management)
-                localStorage.setItem('token', response.data.token);
-                navigate('/login'); // Redirect to the dashboard after successful login
+            if (response) {
+                navigate('/login', { state: { userSigned: true } }); // Redirect to the dashboard after successful login
             }
+
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (err) {
             setError('Signup failed. Please check your credentials.');
-            console.error('Signup error:', err);
+            setDisableBtn(false)
         }
     };
 
@@ -58,7 +60,7 @@ const Signup: React.FC = () => {
                         className="border rounded p-2 w-full"
                     />
                 </div>
-                <button type="submit" className="bg-blue-500 disabled:bg-gray-500 text-white p-2 rounded w-full">
+                <button type="submit" className="bg-blue-500 disabled:bg-gray-400 text-white p-2 rounded w-full" disabled={disableBtn}>
                     Sign Up
                 </button>
             </form>

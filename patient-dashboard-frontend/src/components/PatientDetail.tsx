@@ -21,11 +21,9 @@ const PatientDetail: React.FC<PatientDetailProps> = ({ patient }) => {
                     headers: { Authorization: `Bearer ${window.localStorage.getItem('token')}` }
                 };
                 const response = await axios.get<Patient>(`${import.meta.env.VITE_APP_API_URL}/api/patients/${patient.id}`, config);
-                console.log(response.data);
-
                 setDetailedPatient(response.data);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             } catch (error) {
-                console.log(error);
                 setError('Error fetching patient details.');
             } finally {
                 setLoading(false);
