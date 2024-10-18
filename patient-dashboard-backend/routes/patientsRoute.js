@@ -7,15 +7,27 @@ const router = express.Router();
 // API endpoint to fetch patient list
 router.get("/", async (req, res) => {
   try {
-    console.log(req)
     const page = parseInt(req.query.page) || 1; // Current page number
     const size = parseInt(req.query.size) || 10; // Number of records per page
     const offset = (page - 1) * size; // Calculate the offset
 
-    const totalCount = await Patient.countDocuments();
+    const searchQuery = req.query.search ? req.query.search.toLowerCase() : ""; // Get the search query
 
-    // Fetch the patients for the current page
-    const patients = await Patient.find()
+    // const totalCount = await Patient.countDocuments();
+    const totalCount = await Patient.countDocuments({
+      $or: [
+        { name: { $regex: searchQuery, $options: "i" } }, // Search in name
+        { medicalHistory: { $regex: searchQuery, $options: "i" } }, // Search in medical history
+        // Add more fields to search in as necessary
+      ],
+    });
+
+    const patients = await Patient.find({
+      $or: [
+        { name: { $regex: searchQuery, $options: "i" } },
+        { medicalHistory: { $regex: searchQuery, $options: "i" } },
+      ],
+    })
       .select("name dateOfBirth age medicalHistory")
       .skip(offset) // Use the offset to skip records
       .limit(size) // Limit the number of records returned
