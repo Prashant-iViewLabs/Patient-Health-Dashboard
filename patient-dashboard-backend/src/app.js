@@ -10,13 +10,13 @@ const cors = require('cors');
 
 dotenv.config();
 
+const app = express();
+const PORT = process.env.PORT || 8000;
+
 app.use(cors({
   origin: 'http://localhost:5173', // Replace with your frontend URL
   credentials: true, // Include credentials if necessary (like cookies or auth headers)
 }));
-
-const app = express();
-const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
 
