@@ -2,15 +2,22 @@ export interface Patient {
   id: string;
   name: string;
   dateOfBirth: string;
-  email: string;
-  phone: string;
-  healthRecords: string[];
+  email?: string;
+  phone?: string;
+  healthRecords?: string[];
   age: number;
   condition: string[];
-  medicationHistory?: string[]; // New field
-  pastTreatments?: string[]; // New field
+  medicalHistory?: string[]; // New field
+  pastTreatments?: pastTreatments[]; // New field
   labResults?: { date: string; result: string; testName: string }[]; // New field
   __v: number;
+}
+
+export interface pastTreatments {
+  date: string;
+  notes: string;
+  treatment: string;
+  _id: string;
 }
 
 export interface HealthRecord {

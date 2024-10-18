@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Patient } from '../types';
-// import axios from 'axios';
+import axios from 'axios';
 
 interface PatientDetailProps {
     patient: Patient;
@@ -17,16 +17,13 @@ const PatientDetail: React.FC<PatientDetailProps> = ({ patient }) => {
             setError(null);
 
             try {
-                // const response = await axios.get<Patient>(`/api/patients/${patient.id}`);
-                setDetailedPatient({
-                    ...patient,
-                    pastTreatments: ["Blood pressure monitoring", "Cholesterol-lowering therapy"],
-                    medicationHistory: ["Atenolol", "Simvastatin"],
-                    labResults: [
-                        { date: "2023-05-10T00:00:00.000Z", result: "Normal", testName: "Blood Sugar" },
-                        { date: "2023-06-15T00:00:00.000Z", result: "Elevated", testName: "Cholesterol" }
-                    ],
-                });
+                const config = {
+                    headers: { Authorization: `Bearer ${window.localStorage.getItem('token')}` }
+                };
+                const response = await axios.get<Patient>(`${import.meta.env.VITE_APP_API_URL}/api/patients/${patient.id}`, config);
+                console.log(response.data);
+
+                setDetailedPatient(response.data);
             } catch (error) {
                 console.log(error);
                 setError('Error fetching patient details.');
@@ -36,7 +33,7 @@ const PatientDetail: React.FC<PatientDetailProps> = ({ patient }) => {
         };
 
         fetchPatientDetails();
-    }, [patient.id]);
+    }, [patient, patient.id]);
 
     if (loading) {
         return <p>Loading patient details...</p>;
@@ -53,21 +50,22 @@ const PatientDetail: React.FC<PatientDetailProps> = ({ patient }) => {
     return (
         <div className="mb-4 border-2 rounded-md p-4 shadow-lg">
             <h3 className="text-xl font-semibold">{detailedPatient.name}'s Details</h3>
-            <p><strong>Age:</strong> {detailedPatient.age}</p>
+            <p><strong>Age:</strong> {patient.age}</p>
             <p><strong>Date of Birth:</strong> {new Date(detailedPatient.dateOfBirth).toLocaleDateString()}</p>
             <p><strong>Email:</strong> {detailedPatient.email}</p>
             <p><strong>Phone:</strong> {detailedPatient.phone}</p>
-            <p><strong>Patient Id:</strong> {detailedPatient.id}</p>
+            <p><strong>Patient Id:</strong> {patient.id}</p>
 
             <h4 className="mt-2 font-semibold">Conditions:</h4>
-            <ul>
-                {detailedPatient.condition.map((record, index) => (
-                    <li key={index} className="text-sm text-gray-600">
-                        {record}
-                    </li>
-                ))}
-            </ul>
-
+            {detailedPatient.medicalHistory && (
+                <ul>
+                    {detailedPatient.medicalHistory.map((record, index) => (
+                        <li key={index} className="text-sm text-gray-600">
+                            {record}
+                        </li>
+                    ))}
+                </ul>
+            )}
             {detailedPatient.healthRecords && (
                 <div>
                     <h4 className="mt-4 font-semibold">Health Records:</h4>
@@ -87,20 +85,12 @@ const PatientDetail: React.FC<PatientDetailProps> = ({ patient }) => {
                     <ul>
                         {detailedPatient.pastTreatments.map((treatment, index) => (
                             <li key={index} className="text-sm text-gray-600">
-                                {treatment}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
+                                <div>
+                                    <li>{new Date(treatment.date).toLocaleDateString()}</li>
+                                    <li>{treatment.treatment}</li>
+                                    <li>{treatment.notes}</li>
 
-            {detailedPatient.medicationHistory && (
-                <div>
-                    <h4 className="mt-4 font-semibold">Medication History:</h4>
-                    <ul>
-                        {detailedPatient.medicationHistory.map((medication, index) => (
-                            <li key={index} className="text-sm text-gray-600">
-                                {medication}
+                                </div>
                             </li>
                         ))}
                     </ul>

@@ -23,7 +23,7 @@ const App: React.FC = () => {
     setIsLoggedIn(window.localStorage.getItem("token") ? true : false)
   }, [])
 
-  return (
+  return (<>
     <Router>
       <Header isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <Routes>
@@ -36,6 +36,7 @@ const App: React.FC = () => {
         } />
       </Routes>
     </Router>
+  </>
   );
 };
 

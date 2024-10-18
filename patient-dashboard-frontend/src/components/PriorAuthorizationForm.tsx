@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-// import axios from 'axios';
+import axios from 'axios';
 import { Patient } from '../types';
 import { Dialog, DialogPanel, DialogBackdrop } from '@headlessui/react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 interface PriorAuthorizationFormProps {
     open: boolean;
@@ -27,22 +30,27 @@ const PriorAuthorizationForm: React.FC<PriorAuthorizationFormProps> = ({ open, o
             ...formData,
             patientId: patient.id,
         });
-
-        // axios.post('/api/authorization', {
-        //     ...formData,
-        //     patientId: patient.id,
-        // })
-        //     .then(response => {
-        //         console.log(response);
-        //         alert('Authorization request submitted successfully!');
-        //     })
-        //     .catch(error => {
-        //         console.error('Error submitting authorization request:', error);
-        //     });
+        const config = {
+            headers: { Authorization: `Bearer ${window.localStorage.getItem('token')}` }
+        };
+        axios.post(`${import.meta.env.VITE_APP_API_URL}/api/prior-authorization`, {
+            ...formData,
+            patientId: patient.id,
+        }, config)
+            .then(response => {
+                console.log(response);
+                toast.success('Authorization request submitted successfully!');
+                // alert('Authorization request submitted successfully!');
+            })
+            .catch(error => {
+                console.error('Error submitting authorization request:', error);
+                toast.error('Failed to submit authorization request. Please try again.');
+            });
     };
 
     return (
         <Dialog open={open} onClose={onClose} className="relative z-10">
+            <ToastContainer />
             <DialogBackdrop
                 transition
                 className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
