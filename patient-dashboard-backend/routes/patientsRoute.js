@@ -9,7 +9,7 @@ router.get("/", async (req, res) => {
   try {
     console.log(req)
     const page = parseInt(req.query.page) || 1; // Current page number
-    const size = parseInt(req.query.size) || 2; // Number of records per page
+    const size = parseInt(req.query.size) || 10; // Number of records per page
     const offset = (page - 1) * size; // Calculate the offset
 
     const totalCount = await Patient.countDocuments();
