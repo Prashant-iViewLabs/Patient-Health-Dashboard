@@ -6,13 +6,20 @@ const patientRoutes = require("../routes/patientsRoute"); // Import the patient 
 const priorAuthorizationRoutes = require("../routes/priorAuthorizationRoutes"); // Import the prior authorization routes
 const authRoutes = require("../routes/authRoutes"); // Adjust path as necessary
 const authMiddleware = require("../middleware/authMiddleware");
+const cors = require('cors');
 
 dotenv.config();
+
+app.use(cors({
+  origin: 'http://localhost:5173', // Replace with your frontend URL
+  credentials: true, // Include credentials if necessary (like cookies or auth headers)
+}));
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
+
 
 // Connect to MongoDB
 mongoose
