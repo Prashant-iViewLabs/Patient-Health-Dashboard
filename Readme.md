@@ -11,7 +11,6 @@ This project is a full-stack application designed to help healthcare providers m
 - [Environment Variables](#environment-variables)
 - [Running the Application](#running-the-application)
 - [API Documentation](#api-documentation)
-- [Testing](#testing)
 - [Video Demonstration](#video-demonstration)
 - [Bonus: Deployment](#bonus-deployment)
 
@@ -129,6 +128,9 @@ A short video demonstrating the project's functionality can be found [here](#). 
 - Navigating the patient dashboard
 - Viewing patient details and health records
 - Submitting a prior authorization request
+- Frontend workflow - [Healthcare Mangement Frontend.webm](https://github.com/user-attachments/assets/9ded859e-2749-4fa6-995e-07baab5befed)
+- Backend Database structure - [mongodb-database.webm](https://github.com/user-attachments/assets/7b379111-9634-4f89-aa9d-3bbc37f4d263)
+
 
 ## Bonus: Deployment
 
