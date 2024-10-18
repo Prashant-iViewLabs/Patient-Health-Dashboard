@@ -134,8 +134,8 @@ A short video demonstrating the project's functionality can be found [here](#). 
 
 The application is deployed on **Render** (frontend) and **Render** (backend). You can access the live version at:
 
-- **Frontend**: [https://patient-heath-frontend.onrender.com/](#)
-- **Backend**: [https://patient-health-dashboard-8v2o.onrender.com](#)
+- **Frontend**: [https://patient-heath-frontend.onrender.com/]
+- **Backend**: [https://patient-health-dashboard-8v2o.onrender.com]
 
 ---
 
