@@ -60,7 +60,7 @@ const PatientDetail: React.FC<PatientDetailProps> = ({ patient }) => {
             {detailedPatient.medicalHistory && (
                 <ul>
                     {detailedPatient.medicalHistory.map((record, index) => (
-                        <li key={index} className="text-sm text-gray-600">
+                        <li key={index} className="text-sm text-gray-600 ">
                             {record}
                         </li>
                     ))}
@@ -79,34 +79,34 @@ const PatientDetail: React.FC<PatientDetailProps> = ({ patient }) => {
                 </div>
             )}
 
-            {detailedPatient.pastTreatments && (
+            {detailedPatient.pastTreatments && detailedPatient.pastTreatments.length > 0 && (
                 <div>
                     <h4 className="mt-4 font-semibold">Past Treatments:</h4>
-                    <ul>
+                    <ol>
                         {detailedPatient.pastTreatments.map((treatment, index) => (
                             <li key={index} className="text-sm text-gray-600">
-                                <div>
-                                    <li>{new Date(treatment.date).toLocaleDateString()}</li>
+                                <ul>
+                                    <li className='font-bold'>{new Date(treatment.date).toLocaleDateString()}</li>
                                     <li>{treatment.treatment}</li>
                                     <li>{treatment.notes}</li>
 
-                                </div>
+                                </ul>
                             </li>
                         ))}
-                    </ul>
+                    </ol>
                 </div>
             )}
 
             {detailedPatient.labResults && detailedPatient.labResults.length > 0 && (
                 <div>
                     <h4 className="mt-4 font-semibold">Lab Results:</h4>
-                    <ul>
+                    <ol>
                         {detailedPatient.labResults.map((result, index) => (
                             <li key={index} className="text-sm text-gray-600">
                                 <strong>{result.testName}:</strong> {result.result} (Date: {new Date(result.date).toLocaleDateString()})
                             </li>
                         ))}
-                    </ul>
+                    </ol>
                 </div>
             )}
         </div>

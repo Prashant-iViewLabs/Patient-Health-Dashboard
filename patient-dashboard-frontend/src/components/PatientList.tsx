@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Patient } from '../types';
 
@@ -47,147 +47,12 @@ const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
+    const [debouncedTerm, setDebouncedTerm] = useState(searchTerm);
     const patientsPerPage = 5;
-
+    const config = {
+        headers: { Authorization: `Bearer ${window.localStorage.getItem('token')}` }
+    };
     useEffect(() => {
-        // setPatients([
-        //     {
-        //         "id": "67111331ecb0d624f6713a58",
-        //         "name": "John Doe",
-        //         "dateOfBirth": "1980-01-01T00:00:00.000Z",
-        //         "email": "john.doe@example.com",
-        //         "phone": "123-456-7890",
-        //         "healthRecords": [
-        //             "hypertension",
-        //             "hyperlipidemia"
-        //         ],
-        //         "age": 44,
-        //         "condition": ["hypertension", "hyperlipidemia"],
-        //         "__v": 0
-        //     },
-        //     {
-        //         "id": "57111331ecb0d624f6713a59",
-        //         "name": "Jane Smith",
-        //         "dateOfBirth": "1990-05-15T00:00:00.000Z",
-        //         "email": "jane.smith@example.com",
-        //         "phone": "987-654-3210",
-        //         "healthRecords": [
-        //             "diabetes",
-        //             "asthma"
-        //         ],
-        //         "age": 33,
-        //         "condition": ["diabetes", "asthma"],
-        //         "__v": 0
-        //     },
-        //     {
-        //         "id": "77111331ecb0d624f6713a5a",
-        //         "name": "Emily Johnson",
-        //         "dateOfBirth": "1975-09-22T00:00:00.000Z",
-        //         "email": "emily.johnson@example.com",
-        //         "phone": "555-123-4567",
-        //         "healthRecords": [
-        //             "thyroid disorder"
-        //         ],
-        //         "age": 48,
-        //         "condition": ["thyroid disorder"],
-        //         "__v": 0
-        //     },
-        //     {
-        //         "id": "67111331ecb0d624f6713a5b",
-        //         "name": "Michael Brown",
-        //         "dateOfBirth": "1985-02-10T00:00:00.000Z",
-        //         "email": "michael.brown@example.com",
-        //         "phone": "555-987-6543",
-        //         "healthRecords": [
-        //             "none"
-        //         ],
-        //         "age": 39,
-        //         "condition": [],
-        //         "__v": 0
-        //     },
-        //     {
-        //         "id": "67111331ecb0d624f6713a5c",
-        //         "name": "Sarah Davis",
-        //         "dateOfBirth": "1965-12-05T00:00:00.000Z",
-        //         "email": "sarah.davis@example.com",
-        //         "phone": "555-246-8101",
-        //         "healthRecords": [
-        //             "hypertension"
-        //         ],
-        //         "age": 58,
-        //         "condition": ["hypertension"],
-        //         "__v": 0
-        //     },
-        //     {
-        //         "id": "67111331ecb0d624f6713a5d",
-        //         "name": "David Wilson",
-        //         "dateOfBirth": "2000-06-30T00:00:00.000Z",
-        //         "email": "david.wilson@example.com",
-        //         "phone": "555-135-7913",
-        //         "healthRecords": [
-        //             "none"
-        //         ],
-        //         "age": 24,
-        //         "condition": [],
-        //         "__v": 0
-        //     },
-        //     {
-        //         "id": "67111331ecb0d624f6713a5e",
-        //         "name": "Laura Martinez",
-        //         "dateOfBirth": "1995-03-18T00:00:00.000Z",
-        //         "email": "laura.martinez@example.com",
-        //         "phone": "555-246-1357",
-        //         "healthRecords": [
-        //             "allergies"
-        //         ],
-        //         "age": 29,
-        //         "condition": ["allergies"],
-        //         "__v": 0
-        //     },
-        //     {
-        //         "id": "67111331ecb0d624f6713a5f",
-        //         "name": "Robert Garcia",
-        //         "dateOfBirth": "1988-11-11T00:00:00.000Z",
-        //         "email": "robert.garcia@example.com",
-        //         "phone": "555-864-2097",
-        //         "healthRecords": [
-        //             "migraines"
-        //         ],
-        //         "age": 35,
-        //         "condition": ["migraines"],
-        //         "__v": 0
-        //     },
-        //     {
-        //         "id": "67111331ecb0d624f6713a60",
-        //         "name": "Sophia Anderson",
-        //         "dateOfBirth": "1992-07-24T00:00:00.000Z",
-        //         "email": "sophia.anderson@example.com",
-        //         "phone": "555-753-1594",
-        //         "healthRecords": [
-        //             "none"
-        //         ],
-        //         "age": 31,
-        //         "condition": [],
-        //         "__v": 0
-        //     },
-        //     {
-        //         "id": "67111331ecb0d624f6713a61",
-        //         "name": "James Thomas",
-        //         "dateOfBirth": "1978-04-12T00:00:00.000Z",
-        //         "email": "james.thomas@example.com",
-        //         "phone": "555-369-2580",
-        //         "healthRecords": [
-        //             "diabetes",
-        //             "high cholesterol"
-        //         ],
-        //         "age": 46,
-        //         "condition": ["diabetes", "high cholesterol"],
-        //         "__v": 0
-        //     }
-        // ]);
-        const config = {
-            headers: { Authorization: `Bearer ${window.localStorage.getItem('token')}` }
-        };
         axios.get(`${import.meta.env.VITE_APP_API_URL}/api/patients?size=${patientsPerPage}&page=${currentPage}`,
             config
         )
@@ -200,14 +65,29 @@ const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => {
             .catch(error => console.error('Error fetching patients:', error));
     }, [currentPage]);
 
-    const filterPatients = (searchedTerm: string) => {
+    const filterPatients = useCallback(async (searchedTerm: string) => {
 
-        const filteredPatients = patients.filter(patient =>
-            patient.name.toLowerCase().includes(searchedTerm.toLowerCase())
-        );
-        setPatients(filteredPatients)
+        const filteredPatients = await axios.get(`${import.meta.env.VITE_APP_API_URL}/api/patients?size=${patientsPerPage}&page=${currentPage}&search=${searchedTerm}`, config)
+        const formattedPatients: Patient[] = formatPatient(filteredPatients.data.patients)
+        setPatients(formattedPatients)
         setSearchTerm(searchedTerm);
-    }
+    }, [])
+    useEffect(() => {
+        // Set a timeout to update the debounced term
+        const timer = setTimeout(() => {
+            setDebouncedTerm(searchTerm);
+        }, 300); // Adjust the delay time (in milliseconds) as needed
+
+        // Clear timeout if the user types before the timer completes
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
+
+    useEffect(() => {
+        // Call the filter function when debouncedTerm updates
+        filterPatients(debouncedTerm);
+        // setCurrentPage(1); // Uncomment if you want to reset pagination on search
+    }, [debouncedTerm, filterPatients]);
+
 
     // const indexOfLastPatient = currentPage * patientsPerPage;
     // const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
@@ -231,16 +111,13 @@ const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => {
         <div>
             <input
                 type="text"
-                placeholder="Search patients..."
+                placeholder="Search patients or condition"
                 value={searchTerm}
-                onChange={(e) => {
-                    filterPatients(e.target.value)
-                    // setCurrentPage(1); // Reset to the first page when searching
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="mb-4 p-2 h-12 border rounded w-full"
             />
             <ul className="flex-1 overflow-y-auto max-h-80 space-y-2">
-                {patients.map(patient => (
+                {patients.length > 0 ? patients.map(patient => (
                     <li
                         key={patient.id}
                         className="p-2 border-b cursor-pointer hover:bg-gray-100"
@@ -250,11 +127,13 @@ const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => {
                             {patient.name}
                             <ul>
                                 <li>Age: {patient.age}</li>
-                                <li>Condition: {patient.condition.join(", ")}</li>
+                                <li>Condition: {patient.condition?.join(", ")}</li>
                             </ul>
                         </div>
                     </li>
-                ))}
+                ))
+                    : <>No patient found</>
+                }
             </ul>
             <div className="flex h-12 justify-between items-center mt-4">
                 <button

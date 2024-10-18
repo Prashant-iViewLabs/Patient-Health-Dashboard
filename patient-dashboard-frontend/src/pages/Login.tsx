@@ -28,6 +28,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             }
         } catch (err) {
             setError('Login failed. Please check your credentials.');
+            setDisableBtn(false)
             console.error('Login error:', err);
         }
     };
@@ -66,7 +67,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                             className="border rounded p-2 w-full"
                         />
                     </div>
-                    <button type="submit" id='loginBtn' className="bg-blue-500 text-white p-2 rounded w-full" disabled={disableBtn}>
+                    <button type="submit" id='loginBtn' className="bg-blue-500 disabled:bg-gray-400 text-white p-2 rounded w-full" disabled={disableBtn}>
                         Login
                     </button>
                 </form>

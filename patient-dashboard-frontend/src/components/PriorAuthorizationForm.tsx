@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Patient } from '../types';
 import { Dialog, DialogPanel, DialogBackdrop } from '@headlessui/react';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
 interface PriorAuthorizationFormProps {
     open: boolean;
-    onClose: (value: boolean) => void;
+    onClose: (formSubmittedStatus: boolean) => void,
+    closeFunc: (value: boolean) => void;
     patient: Patient;
 }
 
-const PriorAuthorizationForm: React.FC<PriorAuthorizationFormProps> = ({ open, onClose, patient }) => {
+const PriorAuthorizationForm: React.FC<PriorAuthorizationFormProps> = ({ open, onClose, closeFunc, patient }) => {
     const [formData, setFormData] = useState({
         treatmentType: '',
         insurancePlan: '',
@@ -39,18 +39,17 @@ const PriorAuthorizationForm: React.FC<PriorAuthorizationFormProps> = ({ open, o
         }, config)
             .then(response => {
                 console.log(response);
-                toast.success('Authorization request submitted successfully!');
+                onClose(true)
                 // alert('Authorization request submitted successfully!');
             })
             .catch(error => {
                 console.error('Error submitting authorization request:', error);
-                toast.error('Failed to submit authorization request. Please try again.');
+                onClose(false)
             });
     };
 
     return (
-        <Dialog open={open} onClose={onClose} className="relative z-10">
-            <ToastContainer />
+        <Dialog open={open} onClose={closeFunc} className="relative z-10">
             <DialogBackdrop
                 transition
                 className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"

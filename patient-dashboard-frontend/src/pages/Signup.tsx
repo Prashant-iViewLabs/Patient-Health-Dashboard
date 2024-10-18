@@ -16,7 +16,7 @@ const Signup: React.FC = () => {
                 // if (username === "Prashant" && password === "123456789") {
                 // Store the token (you might want to use localStorage or context for better state management)
                 localStorage.setItem('token', response.data.token);
-                navigate('/'); // Redirect to the dashboard after successful login
+                navigate('/login'); // Redirect to the dashboard after successful login
             }
         } catch (err) {
             setError('Signup failed. Please check your credentials.');
@@ -58,7 +58,7 @@ const Signup: React.FC = () => {
                         className="border rounded p-2 w-full"
                     />
                 </div>
-                <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
+                <button type="submit" className="bg-blue-500 disabled:bg-gray-500 text-white p-2 rounded w-full">
                     Sign Up
                 </button>
             </form>
