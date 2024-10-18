@@ -11,7 +11,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     const [password, setPassword] = useState<string>('');
     const [disableBtn, setDisableBtn] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null);
-    console.log(state);
 
     const location = useLocation();
     const navigate = useNavigate();
