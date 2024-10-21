@@ -68,17 +68,19 @@ const PatientList: React.FC<PatientListProps> = ({ onSelectPatient }) => {
     }, [currentPage]);
 
     const filterPatients = useCallback(async (searchedTerm: string) => {
-
-        const filteredPatients = await axios.get(`${import.meta.env.VITE_APP_API_URL}/api/patients?size=${patientsPerPage}&page=${currentPage}&search=${searchedTerm}`, config)
+        const filteredPatients = await axios.get(`${import.meta.env.VITE_APP_API_URL}/api/patients?size=${patientsPerPage}&page=1&search=${searchedTerm}`, config)
         const formattedPatients: Patient[] = formatPatient(filteredPatients.data.patients)
         setPatients(formattedPatients)
-        setSearchTerm(searchedTerm);
+        setCurrentPage(filteredPatients.data.metadata.currentPage)
+        setTotalPages(filteredPatients.data.metadata.totalPages)
+        // setSearchTerm(searchedTerm);
     }, [])
+
     useEffect(() => {
         // Set a timeout to update the debounced term
         const timer = setTimeout(() => {
             setDebouncedTerm(searchTerm);
-        }, 300); // Adjust the delay time (in milliseconds) as needed
+        }, 500); // Adjust the delay time (in milliseconds) as needed
 
         // Clear timeout if the user types before the timer completes
         return () => clearTimeout(timer);
